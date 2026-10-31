@@ -4,12 +4,23 @@ Framework-free TypeScript helpers: string, number, date and object helpers, debo
 
 ## Install
 
-The package is published to GitHub Packages. Point the `@volo-uti` scope at it once in the product's `.npmrc`, and give the package manager a token that can read packages (`NODE_AUTH_TOKEN`; GitHub Packages asks for one even for public packages):
+The package is published to GitHub Packages. Map the `@volo-uti` scope to it in the product's `.npmrc`, and put a token that can read packages in your user-level `~/.npmrc`. pnpm ignores credentials written in a project `.npmrc`, and GitHub Packages asks for a token even for public packages. In CI, `actions/setup-node` with `registry-url` writes the user-level file from `NODE_AUTH_TOKEN`.
 
 ```ini
-# .npmrc
+# the product's .npmrc
 @volo-uti:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+```
+
+```ini
+# ~/.npmrc (a token with read:packages)
+//npm.pkg.github.com/:_authToken=<token>
+```
+
+pnpm waits `minimumReleaseAge` before it installs a new release. List the scope in the product's `pnpm-workspace.yaml` so releases of these packages install at once:
+
+```yaml
+minimumReleaseAgeExclude:
+  - "@volo-uti/*"
 ```
 
 ```bash
