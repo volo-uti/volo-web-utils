@@ -1,6 +1,6 @@
 {
   "name": "@volo-uti/volo-web-utils",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Framework-free helpers (dates, strings, objects, debounce/throttle, logging) for Volo products",
   "keywords": [
     "volo",
