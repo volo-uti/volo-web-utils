@@ -1,0 +1,64 @@
+name: Publish to GitHub Packages
+
+# Tests run locally in a clean container (`pnpm verify`, enforced by the pre-push hook). This workflow
+# only builds and publishes the package for a version tag and reports start and finish to Slack.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: ./.github/actions/slack-notify
+        with:
+          status: start
+          title: Publish to GitHub Packages
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel: ${{ vars.SLACK_CICD_CHANNEL }}
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://npm.pkg.github.com
+          scope: "@volo-uti"
+
+      - name: Check the tag matches the package version
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match version $version in package.json" >&2
+            exit 1
+          fi
+
+      # The pnpm version pinned by "packageManager" (corepack is not used).
+      - name: Install pnpm
+        run: npm install --global "pnpm@$(node -p "require('./package.json').packageManager.split('@')[1]")"
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+      - run: pnpm publish --no-git-checks
+
+      - uses: ./.github/actions/slack-notify
+        if: always()
+        with:
+          status: ${{ job.status }}
+          title: Publish to GitHub Packages
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel: ${{ vars.SLACK_CICD_CHANNEL }}

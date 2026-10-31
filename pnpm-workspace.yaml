@@ -1,0 +1,15 @@
+# Do not install versions published less than a day ago (minutes).
+minimumReleaseAge: 1440
+
+# Packages whose install scripts may run.
+allowBuilds:
+  esbuild: true
+  lefthook: true
+
+publicHoistPattern:
+  - "*eslint*"
+  - "*prettier*"
+
+# Shared versions referenced with "catalog:".
+catalog:
+  lefthook: ^2.2.2

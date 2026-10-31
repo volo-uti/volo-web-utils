@@ -1,0 +1,80 @@
+{
+  "name": "@volo-uti/volo-web-utils",
+  "version": "0.1.0",
+  "description": "Framework-free helpers (dates, strings, objects, debounce/throttle, logging) for Volo products",
+  "keywords": [
+    "volo",
+    "utils",
+    "helpers"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/volo-uti/volo-web-utils.git"
+  },
+  "homepage": "https://github.com/volo-uti/volo-web-utils#readme",
+  "bugs": {
+    "url": "https://github.com/volo-uti/volo-web-utils/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "volo-web-utils-index": "./bin/volo-web-utils-index.mjs"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "docs",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm check:index && pnpm check:docs && pnpm test && pnpm build",
+    "check:docs": "node scripts/component-docs.mjs --check",
+    "check:index": "node scripts/agent-index.mjs --check",
+    "clean": "rm -rf dist coverage node_modules",
+    "dev": "tsup --watch",
+    "fmt": "prettier --write .",
+    "fmt:check": "prettier --check .",
+    "index": "node scripts/agent-index.mjs && node scripts/component-docs.mjs",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "prepare": "git rev-parse --git-dir >/dev/null 2>&1 && lefthook install || true",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "verify": "bash scripts/verify"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.0.5",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.0.1",
+    "globals": "^17.0.0",
+    "lefthook": "catalog:",
+    "prettier": "^3.9.10",
+    "tsup": "^9.0.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5"
+  },
+  "packageManager": "pnpm@12.16.1"
+}
